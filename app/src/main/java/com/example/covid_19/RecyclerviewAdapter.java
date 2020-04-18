@@ -36,12 +36,13 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         holder.tvTaskDesc.setText(task.getDesc());
         holder.details.setText(task.getDesc());
         holder.Taskdet.setText(task.getName());
+        holder.date.setText(task.getDate());
 
     }
 
     @Override
     public int getItemCount() {
-        return taskList.size();
+        return taskList!=null?taskList.size():0;
     }
 
     public void setTaskList(List<Task> taskList) {
@@ -54,6 +55,7 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         public TextView tvTaskDesc;
         public TextView details;
         public TextView Taskdet;
+        public TextView date;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -61,6 +63,7 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
             tvTaskDesc = itemView.findViewById(R.id.task_desc);
             details = itemView.findViewById(R.id.task_desc_exp);
             Taskdet = itemView.findViewById(R.id.task_name_exp);
+            date = itemView.findViewById(R.id.date);
 
         }
     }

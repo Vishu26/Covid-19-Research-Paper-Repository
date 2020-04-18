@@ -26,24 +26,26 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
 public class fetchPapers extends AsyncTask<Void, Void, List<Task>> {
 
     private List<Task> taskList;
     private ArrayList<String> data;
     public AysncResponse delegate = null;
+    private String url;
+
+    fetchPapers(String url){
+        this.url=url;
+    }
 
     @Override
     protected List<Task> doInBackground(Void... params) {
         data = new ArrayList<>();
         Document doc;
         try {
-            doc = Jsoup.connect("http://www.biomed-sanity.com/").userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:49.0) Gecko/20100101 Firefox/49.0").ignoreHttpErrors(true).followRedirects(true).timeout(100000).ignoreContentType(true).maxBodySize(0).get();
+
+            doc = Jsoup.connect(this.url).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:49.0) Gecko/20100101 Firefox/49.0").ignoreHttpErrors(true).followRedirects(true).timeout(100000).ignoreContentType(true).maxBodySize(0).get();
             Elements e = doc.getElementsByTag("script");
+            //data.add(url.toString());
             for (Element tag : e){
                 for (DataNode node : tag.dataNodes()) {
                     data.add(node.getWholeData());
@@ -58,7 +60,8 @@ public class fetchPapers extends AsyncTask<Void, Void, List<Task>> {
                     JSONObject j = new JSONObject(a.getString(i));
                     String title = j.getString("rel_title");
                     String abs = j.getString("rel_abs");
-                    Task task = new Task(title, abs);
+                    String dt = j.getString("rel_date");
+                    Task task = new Task(title, abs, dt);
                     taskList.add(task);
                 }
                 return taskList;
@@ -74,7 +77,7 @@ public class fetchPapers extends AsyncTask<Void, Void, List<Task>> {
     @Override
     protected void onPostExecute(List<Task> result) {
         //if you had a ui element, you could display the title
-        //Log.i("len",data.get(1).toString());
+        Log.i("len",data.toString());
         delegate.processFinish(result);
     }
 

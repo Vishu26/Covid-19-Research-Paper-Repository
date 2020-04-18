@@ -96,12 +96,30 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="dfdfdfgfgfg"
-                android:textColor="#ee1111"
+                android:textColor="#cc1111"
                 android:textSize="16sp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/date"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="dfdfdf"
+                android:textColor="#D3D3D3"
+                android:textSize="12sp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintRight_toRightOf="@id/task_name"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -116,9 +134,9 @@
                 android:layout_marginTop="8dp"
                 android:text="dfdfdfgfgfg"
                 android:visibility="gone"
-                android:textColor="#ee1111"
+                android:textColor="#cc1111"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/date"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

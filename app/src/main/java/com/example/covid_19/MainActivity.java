@@ -1,19 +1,19 @@
 package com.example.covid_19;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
-import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Adapter;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AysncResponse {
@@ -25,7 +25,11 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
     public int mExpandedPosition=-1;
     public boolean isExpanded = false;
     public List<Task> taskList;
-    fetchPapers asyncTask =new fetchPapers();
+    private fetchPapers asyncTask;
+    private String url;
+    private ProgressBar progressBar;
+    private ImageView imageView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +37,36 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        asyncTask.delegate = this;
+        progressBar = findViewById(R.id.prog);
+        //progressBar.setProgressDrawable(getDrawable(R.drawable.progressbar));
 
+        url = "http://biomed-sanity.com/";
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        asyncTask = new fetchPapers(url);
+        asyncTask.delegate = this;
         //execute the async task
         asyncTask.execute();
+
+        mSwipeRefreshLayout = findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                taskList.clear();
+                recyclerviewAdapter.notifyDataSetChanged();
+                asyncTask = new fetchPapers("http://biomed-sanity.com/");
+                asyncTask.delegate = MainActivity.this;
+                //execute the async task
+                asyncTask.execute();
+            }
+        });
 
         recyclerView = findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
@@ -46,6 +76,25 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
 
         //recyclerviewAdapter.setTaskList(taskList);
         recyclerView.setAdapter(recyclerviewAdapter);
+
+        imageView = findViewById(R.id.search_button);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                EditText query = findViewById(R.id.search);
+                String q = query.getText().toString();
+                progressBar.setVisibility(View.VISIBLE);
+                taskList.clear();
+                recyclerviewAdapter.notifyDataSetChanged();
+                url = "http://biomed-sanity.com/search?q=" + q;
+                Log.i("po",url);
+                asyncTask = new fetchPapers(url);
+                asyncTask.delegate = MainActivity.this;
+                //execute the async task
+                asyncTask.execute();
+            }
+        });
 
         touchListener = new RecyclerTouchListener(this,recyclerView);
         touchListener
@@ -91,9 +140,12 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
     @Override
     public void processFinish(List<Task> output){
         //Log.i("titles", output.toString());
+        progressBar.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setRefreshing(false);
         recyclerviewAdapter.setTaskList(output);
         recyclerviewAdapter.notifyDataSetChanged();
         taskList = output;
+        Log.i("done", output.toString());
 
     }
 
