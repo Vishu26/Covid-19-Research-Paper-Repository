@@ -6,12 +6,22 @@ public class Task {
     private String desc;
     private String date;
     private String link;
+    private String doi;
 
-    public Task(String name, String desc, String date, String link) {
+    public Task(String name, String desc, String date, String link, String doi) {
         this.name = name;
         this.desc = desc;
         this.date = date;
         this.link = link;
+        this.doi = doi;
+    }
+
+    public String getDoi() {
+        return doi;
+    }
+
+    public void setDoi(String doi) {
+        this.doi = doi;
     }
 
     public String getLink() {

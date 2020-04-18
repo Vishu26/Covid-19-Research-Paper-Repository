@@ -14,7 +14,7 @@
         android:layout_alignParentEnd="true"
         android:gravity="right"
         android:padding="10dp"
-        android:background="#d65819"
+        android:background="#cc1111"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -34,11 +34,20 @@
 
                 <ImageView
                     android:id="@+id/img_edit"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:backgroundTint="#003212"
+                    android:src="@mipmap/similar"
                     android:tint="@android:color/white"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="12sp"
+                    android:textAlignment="center"
+                    android:text="Show Similar"
+                    android:textColor="#fff"/>
             </LinearLayout>
         </RelativeLayout>
 
@@ -59,11 +68,19 @@
 
                 <ImageView
                     android:id="@+id/img_delete"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:src="@mipmap/download"
                     android:tint="@android:color/white"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="12sp"
+                    android:text="Download"
+                    android:textAlignment="center"
+                    android:textColor="#fff"/>
             </LinearLayout>
         </RelativeLayout>
 
@@ -84,6 +101,7 @@
         <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#EFE"
             android:foreground="?attr/selectableItemBackground">
 
             <TextView

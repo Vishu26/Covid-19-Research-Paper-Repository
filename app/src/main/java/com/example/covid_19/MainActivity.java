@@ -1,17 +1,13 @@
 package com.example.covid_19;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.app.DownloadManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +19,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -43,13 +40,15 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
     private ProgressBar progressBar;
     private ImageView imageView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private int permissionGrant;
+    private TextView results;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        results = findViewById(R.id.noresults);
 
         progressBar = findViewById(R.id.prog);
         //progressBar.setProgressDrawable(getDrawable(R.drawable.progressbar));
@@ -73,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
             @Override
             public void onRefresh() {
 
+                results.setVisibility(View.GONE);
                 taskList.clear();
                 recyclerviewAdapter.notifyDataSetChanged();
                 asyncTask = new fetchPapers("http://biomed-sanity.com/");
@@ -169,11 +169,21 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
                                 } else {
                                     ActivityCompat.requestPermissions(MainActivity.this,
                                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
-                                            permissionGrant);
+                                            0);
                                 }
 
                             case R.id.edit_task:
-                                Toast.makeText(getApplicationContext(),"Edit Not Available",Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getApplicationContext(),"Edit Not Available",Toast.LENGTH_SHORT).show();
+                                String doi = taskList.get(position).getDoi();
+                                progressBar.setVisibility(View.VISIBLE);
+                                taskList.clear();
+                                recyclerviewAdapter.notifyDataSetChanged();
+                                url = "http://biomed-sanity.com/sim/" + doi;
+                                Log.i("po",url);
+                                asyncTask = new fetchPapers(url);
+                                asyncTask.delegate = MainActivity.this;
+                                //execute the async task
+                                asyncTask.execute();
                                 break;
 
                         }
@@ -186,6 +196,13 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
         //Log.i("titles", output.toString());
         progressBar.setVisibility(View.GONE);
         mSwipeRefreshLayout.setRefreshing(false);
+        if (output.size()==0){
+            recyclerView.setVisibility(View.GONE);
+            results.setVisibility(View.VISIBLE);
+        }
+        else{
+            recyclerView.setVisibility(View.VISIBLE);
+        }
         recyclerviewAdapter.setTaskList(output);
         recyclerviewAdapter.notifyDataSetChanged();
         taskList = output;
@@ -197,5 +214,17 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
     public void onResume() {
         super.onResume();
         recyclerView.addOnItemTouchListener(touchListener);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView
+                .getLayoutManager();
+        if(layoutManager.findFirstCompletelyVisibleItemPosition()==0){
+            super.onBackPressed();
+        }else {
+            recyclerView.smoothScrollToPosition(0);
+        }
     }
 }
