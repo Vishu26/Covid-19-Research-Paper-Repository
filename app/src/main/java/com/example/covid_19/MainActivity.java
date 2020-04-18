@@ -1,5 +1,17 @@
 package com.example.covid_19;
 
+import android.Manifest;
+import android.app.Dialog;
+import android.app.DownloadManager;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
+import java.io.File;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AysncResponse {
@@ -30,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
     private ProgressBar progressBar;
     private ImageView imageView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private int permissionGrant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,9 +139,39 @@ public class MainActivity extends AppCompatActivity implements AysncResponse {
                     public void onSwipeOptionClicked(int viewID, int position) {
                         switch (viewID){
                             case R.id.delete_task:
-                                taskList.remove(position);
-                                recyclerviewAdapter.setTaskList(taskList);
-                                break;
+                                //taskList.remove(position);
+                                //recyclerviewAdapter.setTaskList(taskList);
+
+
+                                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                        == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(MainActivity.this,
+                                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                                        == PackageManager.PERMISSION_GRANTED) {
+                                    DownloadManager downloadmanager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                                    Uri uri = Uri.parse(taskList.get(position).getLink()+".full.pdf");
+
+                                    DownloadManager.Request request = new DownloadManager.Request(uri);
+                                    request.setTitle(taskList.get(position).getName()+".pdf");
+                                    request.setDescription("Downloading");
+                                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                    request.setVisibleInDownloadsUi(false);
+
+                                    File file = new File(Environment.getExternalStorageDirectory(), "Papers/"+taskList.get(position).getName()+".pdf");
+                                    final Uri fileuri = Uri.fromFile(file);
+
+                                    Log.i("path", Environment.getExternalStorageDirectory().toString());
+                                    request.setDestinationUri(fileuri);
+                                    downloadmanager.enqueue(request);
+                                    break;
+                                    //mLocationPermissionGranted = true;
+                                    //getUserDetails();
+                                } else {
+                                    ActivityCompat.requestPermissions(MainActivity.this,
+                                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                                            permissionGrant);
+                                }
+
                             case R.id.edit_task:
                                 Toast.makeText(getApplicationContext(),"Edit Not Available",Toast.LENGTH_SHORT).show();
                                 break;

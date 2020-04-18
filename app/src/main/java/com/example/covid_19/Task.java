@@ -5,11 +5,21 @@ public class Task {
     private String name;
     private String desc;
     private String date;
+    private String link;
 
-    public Task(String name, String desc, String date) {
+    public Task(String name, String desc, String date, String link) {
         this.name = name;
         this.desc = desc;
         this.date = date;
+        this.link = link;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public String getDate() {

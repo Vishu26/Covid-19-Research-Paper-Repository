@@ -61,7 +61,8 @@ public class fetchPapers extends AsyncTask<Void, Void, List<Task>> {
                     String title = j.getString("rel_title");
                     String abs = j.getString("rel_abs");
                     String dt = j.getString("rel_date");
-                    Task task = new Task(title, abs, dt);
+                    String lk = j.getString("rel_link");
+                    Task task = new Task(title, abs, dt, lk);
                     taskList.add(task);
                 }
                 return taskList;
