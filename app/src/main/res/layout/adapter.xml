@@ -132,7 +132,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="dfdfdf"
-                android:textColor="#D3D3D3"
+                android:textColor="#36454F"
                 android:textSize="12sp"
                 android:ellipsize="end"
                 android:maxLines="2"

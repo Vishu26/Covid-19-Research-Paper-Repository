@@ -20,9 +20,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-
 import java.io.File;
 import java.util.List;
 
